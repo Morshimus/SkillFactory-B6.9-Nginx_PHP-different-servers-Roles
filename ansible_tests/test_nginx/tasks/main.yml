@@ -1,10 +1,10 @@
 ---
 # tasks file for test_nginx
 - name : test nginx
-  command: /sbin/nginx -t
-	become: yes
-	 
-- name: check result
-  assert:
-	that:
-         - "{{ output.failed }} == false"
+  command: nginx -t
+  register: output_nginx_conf
+
+- name : test nginx php config
+  command: "curl http://localhost:{{ port }}"
+  register: output_nginx_php_conf 
+  failed_when: "'404' in output_nginx_php_conf.stderr"

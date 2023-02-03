@@ -1,0 +1,6 @@
+---
+# defaults file for nginx
+webroot: "/opt/php-fpm-www-root/"
+port: "8080"
+server_name: "morsh_nginx"
+php_fpm_server: "unix:/run/php-fpm/www.sock"

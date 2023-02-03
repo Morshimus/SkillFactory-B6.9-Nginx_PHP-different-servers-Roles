@@ -1,0 +1,38 @@
+---
+# tasks file for php
+- name: Install test php-fpm packages 
+   yum:
+     name: 
+      - "php-fpm"
+     state: latest
+  
+ - name: PHP root additional dir create
+   file:
+    path: "{{ webroot }}"
+    state: directory
+    mode: '0755'
+
+ - name: PHP fpm runtime www.sock dir
+   file:
+    path: /run/php-fpm/
+    state: directory
+    mode: '0755'
+   when: molecule_yml is  defined  
+
+ - name: Configure php-fpm.conf template
+   template:
+      src: php-fpm.j2
+      dest: "{{ webroot }}/index.php"
+      backup: yes
+      mode: '0755'
+   notify: restart_php
+
+
+ - name: Configure index.php main page template
+   template:
+      src: index.php.j2
+      dest: "{{ webroot }}/index.php"
+      backup: yes
+      mode: '0755'
+   notify: restart_php
+ 

@@ -1,0 +1,28 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  roles:
+   - role: tests/test_port
+     vars:
+      port: "8080"
+   - role: tests/test_nginx
+  tasks:
+
+  - name: check port result
+    assert:
+        that:
+           - "{{ output_port.failed }} == false"    
+
+  - name: check nginx conf result
+    assert:
+        that:
+           - "{{ output_nginx_conf.failed }} == false"
+
+  - name: check nginx php conf result
+    assert:
+        that:
+           - "'PHP' in output_nginx_php_conf.stdout"
+  

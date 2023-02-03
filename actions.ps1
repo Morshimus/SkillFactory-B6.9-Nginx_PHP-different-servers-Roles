@@ -119,7 +119,7 @@ function molecule {
         write-host -f Magenta "Container for such role already exist.To purge use -wipe."
      }else{
 
-     docker run -d --name=molecule-$role `
+     docker run --rm -d --name=molecule-$role `
      -v  $path/molecule:/opt/molecule `
      --privileged `
       morsh92/molecule:dind
@@ -142,6 +142,8 @@ function molecule {
      Copy-Item -Recurse -Force  $path/$role/vars/* $path/molecule/$role/vars
 
      Copy-Item -Recurse -Force  $path/$role/defaults/* $path/molecule/$role/defaults
+
+     Copy-Item -Recurse -Force  $path/$role/verify.yml $path/molecule/$role/molecule/default/verify.yml
     
 
      docker inspect molecule-$role | Out-Null; if($?){
@@ -153,9 +155,9 @@ function molecule {
     
 
      if($verify){
-     if(!(Test-Path $path/molecule/$role/roles)){mkdir -p $path/molecule/$role/roles}
+     if(!(Test-Path $path/molecule/$role/tests)){mkdir -p $path/molecule/$role/tests}
 
-     Copy-Item -Recurse -Force $path/ansible_tests/* $path/molecule/$role/roles
+     Copy-Item -Recurse -Force $path/ansible_tests/* $path/molecule/$role/tests
     
      docker exec -ti molecule-$role  /bin/sh -c  "cd ./$role && molecule verify"
      
@@ -164,3 +166,43 @@ function molecule {
 
 
 } 
+
+function prompt {
+
+    #Assign Windows Title Text
+    $host.ui.RawUI.WindowTitle = "Current Folder: $pwd"
+
+    #Configure current user, current folder and date outputs
+    $CmdPromptCurrentFolder = Split-Path -Path $pwd -Leaf
+    $CmdPromptUser = [Security.Principal.WindowsIdentity]::GetCurrent();
+    $Date = Get-Date -Format 'dddd hh:mm:ss tt'
+
+    # Test for Admin / Elevated
+    $IsAdmin = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+
+    #Calculate execution time of last cmd and convert to milliseconds, seconds or minutes
+    $LastCommand = Get-History -Count 1
+    if ($lastCommand) { $RunTime = ($lastCommand.EndExecutionTime - $lastCommand.StartExecutionTime).TotalSeconds }
+
+    if ($RunTime -ge 60) {
+        $ts = [timespan]::fromseconds($RunTime)
+        $min, $sec = ($ts.ToString("mm\:ss")).Split(":")
+        $ElapsedTime = -join ($min, " min ", $sec, " sec")
+    }
+    else {
+        $ElapsedTime = [math]::Round(($RunTime), 2)
+        $ElapsedTime = -join (($ElapsedTime.ToString()), " sec")
+    }
+
+    #Decorate the CMD Prompt
+    Write-Host ""
+    Write-host ($(if ($IsAdmin) { 'Elevated ' } else { '' })) -BackgroundColor DarkRed -ForegroundColor White -NoNewline
+    Write-Host " USER:$($CmdPromptUser.Name.split("\")[1]) " -BackgroundColor DarkBlue -ForegroundColor Magenta -NoNewline
+    If ($CmdPromptCurrentFolder -like "*:*")
+        {Write-Host " $CmdPromptCurrentFolder "  -ForegroundColor White -BackgroundColor DarkGray -NoNewline}
+        else {Write-Host ".\$CmdPromptCurrentFolder\ "  -ForegroundColor Green -BackgroundColor DarkGray -NoNewline}
+
+    Write-Host " $date " -ForegroundColor White
+    Write-Host "[$elapsedTime] " -NoNewline -ForegroundColor Green
+    return "> "
+}
