@@ -19,7 +19,7 @@
     path: "{{ webroot }}"
     state: directory
     mode: '0755'
-   when: molecule_yml is  defined  
+
 
  - name: PHP fpm runtime www.sock dir
    file:
