@@ -6,3 +6,8 @@
         name: php-fpm
         state: restarted
      when: molecule_yml is not defined
+   
+   - name: restart php service
+     listen: restart_php
+     command: php-fpm
+     when: molecule_yml is  defined

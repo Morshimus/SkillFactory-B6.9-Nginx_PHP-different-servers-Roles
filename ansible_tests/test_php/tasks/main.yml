@@ -1,2 +1,9 @@
 ---
 # tasks file for test_php
+- name : test php-fpm
+  command: php-fpm -t
+  register: output_php_conf
+
+#- name: Connection cgi-fcgi to localhost
+#  command: "php-cgi  ./index.php -a 127.0.0.1 -p {{ port }}  -P /var/run/php-cgi.fastcgi.pid"
+#  register: output_cgi_fcgi_conn

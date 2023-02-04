@@ -1,0 +1,31 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  roles:
+   - role: tests/test_port
+     vars:
+      port: "9000"
+   - role: tests/test_php
+     vars:
+      port: "9000"
+  tasks:
+
+  - name: check port result
+    assert:
+        that:
+           - "{{ output_port.failed }} == false"    
+
+  - name: check php conf result
+    assert:
+        that:
+           - "{{ output_php_conf.failed }} == false"
+
+#  - name: check cgi-fcgi connection to tcp local socket
+#    assert:
+#        that:
+#           - "{{ output_cgi_fcgi_conn.failed }} == false"
+
+  
