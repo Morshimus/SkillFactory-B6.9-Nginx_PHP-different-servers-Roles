@@ -2,12 +2,17 @@ server {
     listen {{ port }};
     listen [::]:{{ port }};
 
-    server_name     {{ server_name }};
-    index           index.php;
+  #  server_name     {{ server_name }};
+  #  index           index.php;
 
     set $webroot '{{ webroot }}';
     
     root $webroot;
+
+    location / {
+        try_files $uri $uri/ /index.php?$is_args$args;
+    }
+
 
     location ~ \.php$ {
         try_files $uri =404;
