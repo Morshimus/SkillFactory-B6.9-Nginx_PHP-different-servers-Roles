@@ -30,7 +30,7 @@
     mode: '0755'
   when: molecule_yml is defined
 
-- name: Configure index.php main page template MOLECULE
+- name: Configure index.php main page template 
   template:
     src: index.php.j2
     dest: "{{ webroot }}/index.php"
@@ -39,7 +39,7 @@
   notify: restart_php  
   when: molecule_yml is not  defined
 
-- name: Configure index.php main page template
+- name: Configure index.php main page template MOLECULE
   template:
     src: index.php.j2
     dest: "{{ webroot }}/index.php"
