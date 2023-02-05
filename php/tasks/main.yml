@@ -3,23 +3,24 @@
 - name: Install php-fpm packages 
   yum:
      name: 
+      - "epel-release"
       - "php-fpm"
      state: latest
   
- - name: Nginx root additional dir create
-   file:
+- name: PHP-FPM document root additional dir create
+  file:
     path: "{{ webroot }}"
     state: directory
     mode: '0755'
-   notify: restart_php 
+  notify: restart_php 
 
- - name: Configure index.php main page template
-   template:
-      src: index.php.j2
-      dest: "{{ webroot }}/index.php"
-      backup: yes
-      mode: '0755'
-   notify: restart_php  
+- name: Configure index.php main page template
+  template:
+    src: index.php.j2
+    dest: "{{ webroot }}/index.php"
+    backup: yes
+    mode: '0755'
+  notify: restart_php  
 
 - name: Configure php-fpm.www.conf template
   template:
