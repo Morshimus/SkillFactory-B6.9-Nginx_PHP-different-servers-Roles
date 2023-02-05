@@ -3,6 +3,7 @@
  - name: Install nginx packages 
    yum:
      name: 
+      - "epel-release"
       - "nginx"
      state: latest
 

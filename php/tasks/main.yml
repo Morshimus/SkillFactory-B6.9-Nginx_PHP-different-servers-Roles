@@ -3,7 +3,6 @@
 - name: Install php-fpm packages 
   yum:
      name: 
-      - "epel-release"
       - "php-fpm"
      state: latest
   
