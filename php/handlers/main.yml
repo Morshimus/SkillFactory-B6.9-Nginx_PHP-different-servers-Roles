@@ -7,7 +7,7 @@
         state: restarted
      when: molecule_yml is not defined
    
-   - name: restart php service
+   - name: restart php service MOLECULE
      listen: restart_php
      command: php-fpm
      when: molecule_yml is  defined

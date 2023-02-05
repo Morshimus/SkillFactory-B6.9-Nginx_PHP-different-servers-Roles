@@ -6,12 +6,38 @@
       - "php-fpm"
      state: latest
   
-- name: PHP-FPM document root additional dir create
+
+- name: Create folder for php-fpm socket MOLECULE
+  file:
+    path: /run/php-fpm/
+    state: directory
+    mode: '0600'
+  when: molecule_yml is defined
+
+- name: PHP-FPM document root additional dir create 
   file:
     path: "{{ webroot }}"
     state: directory
     mode: '0755'
   notify: restart_php 
+  when: molecule_yml is not  defined
+
+
+- name: PHP-FPM document root additional dir create MOLECULE
+  file:
+    path: "{{ webroot }}"
+    state: directory
+    mode: '0755'
+  when: molecule_yml is defined
+
+- name: Configure index.php main page template MOLECULE
+  template:
+    src: index.php.j2
+    dest: "{{ webroot }}/index.php"
+    backup: yes
+    mode: '0755'
+  notify: restart_php  
+  when: molecule_yml is not  defined
 
 - name: Configure index.php main page template
   template:
@@ -19,7 +45,7 @@
     dest: "{{ webroot }}/index.php"
     backup: yes
     mode: '0755'
-  notify: restart_php  
+  when: molecule_yml is defined
 
 - name: Configure php-fpm.www.conf template
   template:
