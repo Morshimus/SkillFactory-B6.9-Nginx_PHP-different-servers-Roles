@@ -1,6 +1,6 @@
 ---
 # tasks file for nginx
- - name: Install nginx packages 
+ - name: Install epel-release if needed packages 
    yum:
      name: 
       - "epel-release"
